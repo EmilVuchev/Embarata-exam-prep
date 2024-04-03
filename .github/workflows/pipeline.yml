@@ -7,7 +7,22 @@ on:
     branches: ["main"]
 
 jobs:
-  build_and_test:
+  build_and_unit_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "npm"
+      - name: Npm install
+        run: npm install
+      - name: Run unit tests
+        run: npm run test:unit
+  run_ui_tests:
+    needs: build_and_unit_test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,8 +36,6 @@ jobs:
         run: npm install
       - name: Install browsers
         run: npx playwright install
-      - name: Run unit tests
-        run: npm run test:unit
       - name: Start application
         run: npm run start &
       - name: Execute Ui tests
